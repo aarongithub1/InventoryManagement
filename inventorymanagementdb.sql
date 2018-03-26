@@ -16,6 +16,20 @@ CREATE SCHEMA IF NOT EXISTS `inventorymanagementdb` DEFAULT CHARACTER SET utf8 ;
 USE `inventorymanagementdb` ;
 
 -- -----------------------------------------------------
+-- Table `inventorymanagementdb`.`cart`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `inventorymanagementdb`.`cart` ;
+
+CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`cart` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `order_id` INT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`cart` (`id` ASC);
+
+
+-- -----------------------------------------------------
 -- Table `inventorymanagementdb`.`customer`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `inventorymanagementdb`.`customer` ;
@@ -28,12 +42,19 @@ CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`customer` (
   `shipping_address` VARCHAR(255) NULL,
   `billing_address` VARCHAR(255) NULL,
   `cart_id` INT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_customer_cart`
+    FOREIGN KEY (`cart_id`)
+    REFERENCES `inventorymanagementdb`.`cart` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 CREATE UNIQUE INDEX `email_UNIQUE` ON `inventorymanagementdb`.`customer` (`email` ASC);
 
 CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`customer` (`id` ASC);
+
+CREATE INDEX `fk_customer_cart_idx` ON `inventorymanagementdb`.`customer` (`cart_id` ASC);
 
 
 -- -----------------------------------------------------
@@ -77,15 +98,19 @@ DROP TABLE IF EXISTS `inventorymanagementdb`.`order` ;
 
 CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`order` (
   `id` INT NOT NULL AUTO_INCREMENT,
+  `cart_id` INT NULL,
+  `customer_id` INT NULL,
   `shipping_address` VARCHAR(255) NULL,
   `billing_address` VARCHAR(255) NULL,
-  `total_price` DECIMAL(10,2) NULL,
+  `amount` DECIMAL(10,2) NULL,
   `date_created` DATETIME NULL,
-  `date_shipped` DATETIME NULL,
-  `order_status` VARCHAR(45) NULL,
-  `customer_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_order_customer`
+  CONSTRAINT `fk_order_cart`
+    FOREIGN KEY (`cart_id`)
+    REFERENCES `inventorymanagementdb`.`cart` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_billing_address`
     FOREIGN KEY (`customer_id`)
     REFERENCES `inventorymanagementdb`.`customer` (`id`)
     ON DELETE NO ACTION
@@ -94,7 +119,9 @@ ENGINE = InnoDB;
 
 CREATE UNIQUE INDEX `idorder_UNIQUE` ON `inventorymanagementdb`.`order` (`id` ASC);
 
-CREATE UNIQUE INDEX `customer_id_UNIQUE` ON `inventorymanagementdb`.`order` (`customer_id` ASC);
+CREATE UNIQUE INDEX `cart_id_UNIQUE` ON `inventorymanagementdb`.`order` (`cart_id` ASC);
+
+CREATE INDEX `fk_billing_address_idx` ON `inventorymanagementdb`.`order` (`customer_id` ASC);
 
 
 -- -----------------------------------------------------
@@ -138,6 +165,17 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
+-- Data for table `inventorymanagementdb`.`cart`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `inventorymanagementdb`;
+INSERT INTO `inventorymanagementdb`.`cart` (`id`, `order_id`) VALUES (1, 1);
+INSERT INTO `inventorymanagementdb`.`cart` (`id`, `order_id`) VALUES (2, 2);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
 -- Data for table `inventorymanagementdb`.`customer`
 -- -----------------------------------------------------
 START TRANSACTION;
@@ -177,8 +215,8 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `inventorymanagementdb`;
-INSERT INTO `inventorymanagementdb`.`order` (`id`, `shipping_address`, `billing_address`, `total_price`, `date_created`, `date_shipped`, `order_status`, `customer_id`) VALUES (1, NULL, NULL, NULL, NULL, NULL, NULL, 1);
-INSERT INTO `inventorymanagementdb`.`order` (`id`, `shipping_address`, `billing_address`, `total_price`, `date_created`, `date_shipped`, `order_status`, `customer_id`) VALUES (2, NULL, NULL, NULL, NULL, NULL, NULL, 2);
+INSERT INTO `inventorymanagementdb`.`order` (`id`, `cart_id`, `customer_id`, `shipping_address`, `billing_address`, `amount`, `date_created`) VALUES (1, 1, 1, NULL, NULL, NULL, NULL);
+INSERT INTO `inventorymanagementdb`.`order` (`id`, `cart_id`, `customer_id`, `shipping_address`, `billing_address`, `amount`, `date_created`) VALUES (2, 2, 2, NULL, NULL, NULL, NULL);
 
 COMMIT;
 
