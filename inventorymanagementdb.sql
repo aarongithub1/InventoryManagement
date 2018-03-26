@@ -36,8 +36,8 @@ DROP TABLE IF EXISTS `inventorymanagementdb`.`customer` ;
 
 CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`customer` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(255) NULL,
-  `email` VARCHAR(255) NULL,
+  `name` VARCHAR(255) NULL,
+  `email` VARCHAR(255) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
   `shipping_address` VARCHAR(255) NULL,
   `billing_address` VARCHAR(255) NULL,
@@ -180,8 +180,8 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `inventorymanagementdb`;
-INSERT INTO `inventorymanagementdb`.`customer` (`id`, `username`, `email`, `password`, `shipping_address`, `billing_address`, `cart_id`) VALUES (1, 'aaron', 'a@a.com', '123456', '123 main st.', '321 niam st.', 1);
-INSERT INTO `inventorymanagementdb`.`customer` (`id`, `username`, `email`, `password`, `shipping_address`, `billing_address`, `cart_id`) VALUES (2, 'bob', 'b@b.com', '123456', '456 elm st.', '654 mle st.', 2);
+INSERT INTO `inventorymanagementdb`.`customer` (`id`, `name`, `email`, `password`, `shipping_address`, `billing_address`, `cart_id`) VALUES (1, 'aaron', 'a@a.com', '123456', '123 main st.', '321 niam st.', 1);
+INSERT INTO `inventorymanagementdb`.`customer` (`id`, `name`, `email`, `password`, `shipping_address`, `billing_address`, `cart_id`) VALUES (2, 'bob', 'b@b.com', '123456', '456 elm st.', '654 mle st.', 2);
 
 COMMIT;
 
