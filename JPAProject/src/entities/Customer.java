@@ -1,11 +1,14 @@
 package entities;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.OneToMany;
 
 @Entity
 @Table(name="customer")
@@ -24,7 +27,15 @@ public class Customer {
 	@Column(name="billing_address")
 	private String billingAddress;
 	
+	@OneToMany(mappedBy="customer")
+	private List<Order> orders;
+	
+	
 	// GETTERS AND SETTERS
+	public int getId() {
+		return id;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -58,6 +69,10 @@ public class Customer {
 	}
 	public void setBillingAddress(String billingAddress) {
 		this.billingAddress = billingAddress;
+	}
+	
+	public List<Order> getOrder(){
+		return orders;
 	}
 	
 	//toString
