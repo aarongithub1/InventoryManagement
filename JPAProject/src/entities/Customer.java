@@ -71,9 +71,13 @@ public class Customer {
 		this.billingAddress = billingAddress;
 	}
 	
-	public List<Order> getOrder(){
+	public List<Order> getOrders(){
 		return orders;
 	}
+	public void setOrder(List<Order> orders) {
+		this.orders = orders;
+	}
+	
 	
 	//toString
 	@Override
