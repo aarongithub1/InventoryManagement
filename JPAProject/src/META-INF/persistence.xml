@@ -8,13 +8,16 @@
         <!-- <class>entities.YourClassNames</class> -->
         <class>entities.User</class>
         <class>entities.Customer</class>
+        <class>entities.Order</class>
+        <class>entities.Product</class>
+        <class>entities.Staff</class>
         
         
         <properties>
         		<!-- Configure your connection to the database -->
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/inventorymanagementdb" />
-            <property name="javax.persistence.jdbc.user" value="inventory" />
-            <property name="javax.persistence.jdbc.password" value="inventory" />
+            <property name="javax.persistence.jdbc.user" value="admin" />
+            <property name="javax.persistence.jdbc.password" value="admin" />
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
 
 			<!-- Flip values to true for debugging Hibernate's SQL queries -->
