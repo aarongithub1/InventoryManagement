@@ -16,31 +16,53 @@ CREATE SCHEMA IF NOT EXISTS `inventorymanagementdb` DEFAULT CHARACTER SET utf8 ;
 USE `inventorymanagementdb` ;
 
 -- -----------------------------------------------------
--- Table `inventorymanagementdb`.`user`
+-- Table `inventorymanagementdb`.`cart`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `inventorymanagementdb`.`user` ;
+DROP TABLE IF EXISTS `inventorymanagementdb`.`cart` ;
 
-CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`user` (
+CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`cart` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NULL,
+  `order_id` INT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`cart` (`id` ASC);
+
+
+-- -----------------------------------------------------
+-- Table `inventorymanagementdb`.`customer`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `inventorymanagementdb`.`customer` ;
+
+CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`customer` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(255) NULL,
   `email` VARCHAR(255) NULL,
   `password` VARCHAR(255) NOT NULL,
   `shipping_address` VARCHAR(255) NULL,
   `billing_address` VARCHAR(255) NULL,
-  PRIMARY KEY (`id`))
+  `cart_id` INT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_customer_cart`
+    FOREIGN KEY (`cart_id`)
+    REFERENCES `inventorymanagementdb`.`cart` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `email_UNIQUE` ON `inventorymanagementdb`.`user` (`email` ASC);
+CREATE UNIQUE INDEX `email_UNIQUE` ON `inventorymanagementdb`.`customer` (`email` ASC);
 
-CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`user` (`id` ASC);
+CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`customer` (`id` ASC);
+
+CREATE INDEX `fk_customer_cart_idx` ON `inventorymanagementdb`.`customer` (`cart_id` ASC);
 
 
 -- -----------------------------------------------------
--- Table `inventorymanagementdb`.`inventory`
+-- Table `inventorymanagementdb`.`product`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `inventorymanagementdb`.`inventory` ;
+DROP TABLE IF EXISTS `inventorymanagementdb`.`product` ;
 
-CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`inventory` (
+CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`product` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
   `quantity` INT(11) NULL,
@@ -49,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`inventory` (
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`inventory` (`id` ASC);
+CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`product` (`id` ASC);
 
 
 -- -----------------------------------------------------
@@ -70,32 +92,65 @@ CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`staff` (`id` ASC);
 
 
 -- -----------------------------------------------------
--- Table `inventorymanagementdb`.`cart`
+-- Table `inventorymanagementdb`.`order`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `inventorymanagementdb`.`cart` ;
+DROP TABLE IF EXISTS `inventorymanagementdb`.`order` ;
 
-CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`cart` (
+CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`order` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `inventory_id` INT NULL,
-  `user_id` INT NULL,
+  `cart_id` INT NULL,
+  `customer_id` INT NULL,
+  `shipping_address` VARCHAR(255) NULL,
+  `billing_address` VARCHAR(255) NULL,
+  `amount` DECIMAL(10,2) NULL,
+  `date_created` DATETIME NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_cart_user`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `inventorymanagementdb`.`user` (`id`)
+  CONSTRAINT `fk_order_cart`
+    FOREIGN KEY (`cart_id`)
+    REFERENCES `inventorymanagementdb`.`cart` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_cart_inventory`
-    FOREIGN KEY (`inventory_id`)
-    REFERENCES `inventorymanagementdb`.`inventory` (`id`)
+  CONSTRAINT `fk_billing_address`
+    FOREIGN KEY (`customer_id`)
+    REFERENCES `inventorymanagementdb`.`customer` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`cart` (`id` ASC);
+CREATE UNIQUE INDEX `idorder_UNIQUE` ON `inventorymanagementdb`.`order` (`id` ASC);
 
-CREATE INDEX `fk_cart_inventory_idx` ON `inventorymanagementdb`.`cart` (`inventory_id` ASC);
+CREATE UNIQUE INDEX `cart_id_UNIQUE` ON `inventorymanagementdb`.`order` (`cart_id` ASC);
 
-CREATE INDEX `fk_cart_user_idx` ON `inventorymanagementdb`.`cart` (`user_id` ASC);
+CREATE INDEX `fk_billing_address_idx` ON `inventorymanagementdb`.`order` (`customer_id` ASC);
+
+
+-- -----------------------------------------------------
+-- Table `inventorymanagementdb`.`order_product`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `inventorymanagementdb`.`order_product` ;
+
+CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`order_product` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `order_id` INT NULL,
+  `product_id` INT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_order_product`
+    FOREIGN KEY (`order_id`)
+    REFERENCES `inventorymanagementdb`.`order` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_product_order`
+    FOREIGN KEY (`product_id`)
+    REFERENCES `inventorymanagementdb`.`product` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_product_order_idx` ON `inventorymanagementdb`.`order_product` (`product_id` ASC);
+
+CREATE INDEX `fk_order_product_idx` ON `inventorymanagementdb`.`order_product` (`order_id` ASC);
+
+CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`order_product` (`id` ASC);
 
 SET SQL_MODE = '';
 GRANT USAGE ON *.* TO admin@localhost;
@@ -110,24 +165,35 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
--- Data for table `inventorymanagementdb`.`user`
+-- Data for table `inventorymanagementdb`.`cart`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `inventorymanagementdb`;
-INSERT INTO `inventorymanagementdb`.`user` (`id`, `name`, `email`, `password`, `shipping_address`, `billing_address`) VALUES (1, 'aaron', 'a@a.com', '123456', '123 main st.', '321 niam st.');
-INSERT INTO `inventorymanagementdb`.`user` (`id`, `name`, `email`, `password`, `shipping_address`, `billing_address`) VALUES (2, 'bob', 'b@b.com', '123456', '456 elm st.', '654 mle st.');
+INSERT INTO `inventorymanagementdb`.`cart` (`id`, `order_id`) VALUES (1, 1);
+INSERT INTO `inventorymanagementdb`.`cart` (`id`, `order_id`) VALUES (2, 2);
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `inventorymanagementdb`.`inventory`
+-- Data for table `inventorymanagementdb`.`customer`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `inventorymanagementdb`;
-INSERT INTO `inventorymanagementdb`.`inventory` (`id`, `name`, `quantity`, `available`, `price`) VALUES (1, 'Coffee Mug', 20, true, 10.50);
-INSERT INTO `inventorymanagementdb`.`inventory` (`id`, `name`, `quantity`, `available`, `price`) VALUES (2, 'MacBookPro', 30, true, 3000.00);
-INSERT INTO `inventorymanagementdb`.`inventory` (`id`, `name`, `quantity`, `available`, `price`) VALUES (3, 'Sleeping Bag', 10, true, 75.30);
+INSERT INTO `inventorymanagementdb`.`customer` (`id`, `username`, `email`, `password`, `shipping_address`, `billing_address`, `cart_id`) VALUES (1, 'aaron', 'a@a.com', '123456', '123 main st.', '321 niam st.', 1);
+INSERT INTO `inventorymanagementdb`.`customer` (`id`, `username`, `email`, `password`, `shipping_address`, `billing_address`, `cart_id`) VALUES (2, 'bob', 'b@b.com', '123456', '456 elm st.', '654 mle st.', 2);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `inventorymanagementdb`.`product`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `inventorymanagementdb`;
+INSERT INTO `inventorymanagementdb`.`product` (`id`, `name`, `quantity`, `available`, `price`) VALUES (1, 'Coffee Mug', 20, true, 10.50);
+INSERT INTO `inventorymanagementdb`.`product` (`id`, `name`, `quantity`, `available`, `price`) VALUES (2, 'MacBookPro', 30, true, 3000.00);
+INSERT INTO `inventorymanagementdb`.`product` (`id`, `name`, `quantity`, `available`, `price`) VALUES (3, 'Sleeping Bag', 10, true, 75.30);
 
 COMMIT;
 
@@ -145,15 +211,26 @@ COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `inventorymanagementdb`.`cart`
+-- Data for table `inventorymanagementdb`.`order`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `inventorymanagementdb`;
-INSERT INTO `inventorymanagementdb`.`cart` (`id`, `inventory_id`, `user_id`) VALUES (1, 1, 1);
-INSERT INTO `inventorymanagementdb`.`cart` (`id`, `inventory_id`, `user_id`) VALUES (2, 2, 1);
-INSERT INTO `inventorymanagementdb`.`cart` (`id`, `inventory_id`, `user_id`) VALUES (3, 3, 1);
-INSERT INTO `inventorymanagementdb`.`cart` (`id`, `inventory_id`, `user_id`) VALUES (4, 1, 2);
-INSERT INTO `inventorymanagementdb`.`cart` (`id`, `inventory_id`, `user_id`) VALUES (5, 2, 2);
-INSERT INTO `inventorymanagementdb`.`cart` (`id`, `inventory_id`, `user_id`) VALUES (6, 3, 2);
+INSERT INTO `inventorymanagementdb`.`order` (`id`, `cart_id`, `customer_id`, `shipping_address`, `billing_address`, `amount`, `date_created`) VALUES (1, 1, 1, NULL, NULL, NULL, NULL);
+INSERT INTO `inventorymanagementdb`.`order` (`id`, `cart_id`, `customer_id`, `shipping_address`, `billing_address`, `amount`, `date_created`) VALUES (2, 2, 2, NULL, NULL, NULL, NULL);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `inventorymanagementdb`.`order_product`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `inventorymanagementdb`;
+INSERT INTO `inventorymanagementdb`.`order_product` (`id`, `order_id`, `product_id`) VALUES (1, 1, 1);
+INSERT INTO `inventorymanagementdb`.`order_product` (`id`, `order_id`, `product_id`) VALUES (2, 1, 2);
+INSERT INTO `inventorymanagementdb`.`order_product` (`id`, `order_id`, `product_id`) VALUES (3, 1, 3);
+INSERT INTO `inventorymanagementdb`.`order_product` (`id`, `order_id`, `product_id`) VALUES (4, 2, 1);
+INSERT INTO `inventorymanagementdb`.`order_product` (`id`, `order_id`, `product_id`) VALUES (5, 2, 2);
+INSERT INTO `inventorymanagementdb`.`order_product` (`id`, `order_id`, `product_id`) VALUES (6, 2, 3);
 
 COMMIT;
