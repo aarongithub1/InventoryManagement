@@ -94,6 +94,8 @@ ENGINE = InnoDB;
 
 CREATE UNIQUE INDEX `idorder_UNIQUE` ON `inventorymanagementdb`.`order` (`id` ASC);
 
+CREATE UNIQUE INDEX `customer_id_UNIQUE` ON `inventorymanagementdb`.`order` (`customer_id` ASC);
+
 
 -- -----------------------------------------------------
 -- Table `inventorymanagementdb`.`order_product`
@@ -102,8 +104,8 @@ DROP TABLE IF EXISTS `inventorymanagementdb`.`order_product` ;
 
 CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`order_product` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `order_id` INT NOT NULL,
-  `product_id` INT NOT NULL,
+  `order_id` INT NULL,
+  `product_id` INT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_order_product`
     FOREIGN KEY (`order_id`)
