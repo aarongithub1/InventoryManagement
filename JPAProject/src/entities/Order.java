@@ -108,9 +108,6 @@ public class Order {
 	}
 	
 	
-	
-	
-	
 	// toString
 	@Override
 	public String toString() {
