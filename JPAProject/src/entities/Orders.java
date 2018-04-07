@@ -19,8 +19,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name="order")
-public class Order {
+@Table(name="orders")
+public class Orders {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -112,7 +112,7 @@ public class Order {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Order [id=");
+		builder.append("Orders [id=");
 		builder.append(id);
 		builder.append(", dateCreated=");
 		builder.append(dateCreated);

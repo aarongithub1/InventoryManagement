@@ -28,7 +28,7 @@ public class Customer {
 	private String billingAddress;
 	
 	@OneToMany(mappedBy="customer")
-	private List<Order> orders;
+	private List<Orders> orders;
 	
 	
 	// GETTERS AND SETTERS
@@ -71,10 +71,10 @@ public class Customer {
 		this.billingAddress = billingAddress;
 	}
 	
-	public List<Order> getOrders(){
+	public List<Orders> getOrders(){
 		return orders;
 	}
-	public void setOrder(List<Order> orders) {
+	public void setOrder(List<Orders> orders) {
 		this.orders = orders;
 	}
 	

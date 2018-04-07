@@ -57,11 +57,11 @@ CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`product` (`id` ASC);
 
 
 -- -----------------------------------------------------
--- Table `inventorymanagementdb`.`order`
+-- Table `inventorymanagementdb`.`orders`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `inventorymanagementdb`.`order` ;
+DROP TABLE IF EXISTS `inventorymanagementdb`.`orders` ;
 
-CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`order` (
+CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`orders` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `date_created` DATETIME NULL,
   `total_price` DECIMAL(10,2) NULL,
@@ -77,9 +77,9 @@ CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`order` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`order` (`id` ASC);
+CREATE UNIQUE INDEX `id_UNIQUE` ON `inventorymanagementdb`.`orders` (`id` ASC);
 
-CREATE INDEX `fk_order_customer_idx` ON `inventorymanagementdb`.`order` (`customer_id` ASC);
+CREATE INDEX `fk_order_customer_idx` ON `inventorymanagementdb`.`orders` (`customer_id` ASC);
 
 
 -- -----------------------------------------------------
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `inventorymanagementdb`.`order_product` (
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_order_product`
     FOREIGN KEY (`order_id`)
-    REFERENCES `inventorymanagementdb`.`order` (`id`)
+    REFERENCES `inventorymanagementdb`.`orders` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -167,12 +167,12 @@ COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `inventorymanagementdb`.`order`
+-- Data for table `inventorymanagementdb`.`orders`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `inventorymanagementdb`;
-INSERT INTO `inventorymanagementdb`.`order` (`id`, `date_created`, `total_price`, `order_status`, `shipping_address`, `billing_address`, `customer_id`) VALUES (1, NULL, 1025.00, 'shipped', '123 main st.', '321 main st.', 1);
-INSERT INTO `inventorymanagementdb`.`order` (`id`, `date_created`, `total_price`, `order_status`, `shipping_address`, `billing_address`, `customer_id`) VALUES (2, NULL, 1025.00, 'shipped', '456 main st.', '654 main st.', 2);
+INSERT INTO `inventorymanagementdb`.`orders` (`id`, `date_created`, `total_price`, `order_status`, `shipping_address`, `billing_address`, `customer_id`) VALUES (1, NULL, 1025.00, 'shipped', '123 main st.', '321 main st.', 1);
+INSERT INTO `inventorymanagementdb`.`orders` (`id`, `date_created`, `total_price`, `order_status`, `shipping_address`, `billing_address`, `customer_id`) VALUES (2, NULL, 1025.00, 'shipped', '456 main st.', '654 main st.', 2);
 
 COMMIT;
 

@@ -23,7 +23,7 @@ public class Product {
 	private double price;
 	
 	@ManyToMany(mappedBy="products")
-	private List<Order> orders;
+	private List<Orders> orders;
 	
 	//GETTERS AND SETTERS
 	public int getId() {
@@ -58,10 +58,10 @@ public class Product {
 		this.price = price;
 	}
 	
-	public List<Order> gerOrders() {
+	public List<Orders> gerOrders() {
 		return orders;
 	}
-	public void setOrders(List<Order> orders) {
+	public void setOrders(List<Orders> orders) {
 		this.orders = orders;
 	}
 	

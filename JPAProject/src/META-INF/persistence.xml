@@ -8,7 +8,7 @@
         <!-- <class>entities.YourClassNames</class> -->
         <class>entities.User</class>
         <class>entities.Customer</class>
-        <class>entities.Order</class>
+        <class>entities.Orders</class>
         <class>entities.Product</class>
         <class>entities.Staff</class>
         
