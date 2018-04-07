@@ -10,44 +10,53 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import entities.Customer;
-	
-public class CustomerTest {
+import entities.Product;
+
+public class ProductTest {
 	private EntityManagerFactory emf;
 	private EntityManager em;
-	private Customer c;
+	private Product p;
 	
 	@Before
 	public void setUp() {
 		this.emf = Persistence.createEntityManagerFactory("inventoryManagementPU");
 		this.em = emf.createEntityManager();
-		c = em.find(Customer.class, 1);
+		this.p = em.find(Product.class, 1);
 	}
 	
 	@After
 	public void tearDown() {
 		em.close();
 		emf.close();
-		c = null;
+		p = null;
 	}
 	
 	@Test
-	public void smoke_test() {
+	public void smokeTest() {
 		boolean test = true;
 		assertEquals(true, test);
 	}
 	
 	@Test
-	public void test_customer_order_connection() {
-		assertEquals(1, c.getOrders().size());
-		assertEquals("shipped", c.getOrders().get(0).getOrderStatus().toString());
-		assertEquals("adam", c.getName());
-		assertEquals(3, c.getOrders().get(0).getProducts().size());
-		assertEquals("laptop", c.getOrders().get(0).getProducts().get(0).getName());
-		assertEquals("coffee mug", c.getOrders().get(0).getProducts().get(1).getName());
+	public void test_product_orders_connection() {
+		assertEquals(1, p.getOrders().get(0).getId());
+		assertEquals(2, p.getOrders().get(1).getId());
+	}
+	
+	@Test
+	public void test_product_customer_connection() {
+		assertEquals(1, p.getOrders().get(0).getCustomer().getId());
+		assertEquals(2, p.getOrders().get(1).getCustomer().getId());
 	}
 
 }
+
+
+
+
+
+
+
 
 
 

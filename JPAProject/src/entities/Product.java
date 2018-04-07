@@ -58,7 +58,7 @@ public class Product {
 		this.price = price;
 	}
 	
-	public List<Orders> gerOrders() {
+	public List<Orders> getOrders() {
 		return orders;
 	}
 	public void setOrders(List<Orders> orders) {
